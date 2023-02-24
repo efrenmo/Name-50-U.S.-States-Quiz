@@ -36,9 +36,8 @@ def state_in_list(answer):
     if answer in states_list:
         return True
 def calc_missing_states():
-    for state in states_list:
-        if state not in correct_answers_list:
-            missing_states.append(state)
+    global missing_states
+    missing_states = [state for state in states_list if state not in correct_answers_list]
 
 def write_to_map(state):
     state_coordinates = data[data["state"] == state]
@@ -55,13 +54,11 @@ while len(correct_answers_list) < 50:
                                            prompt="What is another state's name?"
                                            )
     # Convert answer to Title Case
-    answer_state = answer_state.title()
+    answer_state = answer_state.title().strip()
 
     # States that were not recalled are saved to a csv file for review
     if answer_state == "Exit":
-        for state in states_list:
-            if state not in correct_answers_list:
-                missing_states.append(state)
+        calc_missing_states()
         new_data = pd.DataFrame(missing_states)
         new_data.to_csv("states_to_learn.csv")
         break
